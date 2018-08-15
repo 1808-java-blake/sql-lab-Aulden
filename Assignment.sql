@@ -128,24 +128,97 @@ CREATE FUNCTION OLD ()
 --  In this section you will be creating and executing stored procedures. You will be creating various types of stored procedures that take input and output parameters.
 -- 4.1 Basic Stored Procedure
 -- Task – Create a stored procedure that selects the first and last names of all the employees.
+CREATE FUNCTION selEmp()
+    RETURNS TABLE (
+        firstname VARCHAR,
+        lastname VARCHAR
+    )
+    AS $X$
+        BEGIN
+            RETURN QUERY SELECT E.firstname, E.lastname FROM employee E;
+        END;
+        $X$ LANGUAGE PLPGSQL;
+
 -- 4.2 Stored Procedure Input Parameters
 -- Task – Create a stored procedure that updates the personal information of an employee.
+CREATE FUNCTION selEmp()
+    RETURNS TABLE (
+        firstname VARCHAR,
+        lastname VARCHAR
+    )
+    AS $X$
+        BEGIN
+            RETURN QUERY SELECT E.firstname, E.lastname FROM employee E;
+        END;
+        $X$ LANGUAGE PLPGSQL;
 -- Task – Create a stored procedure that returns the managers of an employee.
+-- Returns first and last name of managers of the employee
+CREATE FUNCTION selMan(repTo INTEGER)
+    RETURNS TABLE (
+        firstname VARCHAR,
+        lastname VARCHAR
+    )
+    AS $Z$
+        BEGIN
+            RETURN QUERY SELECT E.firstname, E.lastname FROM employee E WHERE E.employeeid = repTo;
+        END;
+        $Z$ LANGUAGE PLPGSQL;
+
 -- 4.3 Stored Procedure Output Parameters
 -- Task – Create a stored procedure that returns the name and company of a customer.
+CREATE FUNCTION selCust(custId INTEGER)
+    RETURNS TABLE (
+        firstname VARCHAR,
+        lastname VARCHAR,
+        company VARCHAR
+    )
+    AS $F$
+        BEGIN
+            RETURN QUERY SELECT C.firstname, C.lastname, C.company FROM customer C WHERE C.customerid = custId;
+        END;
+        $F$ LANGUAGE PLPGSQL;
+
+
 -- 5.0 Transactions
 -- In this section you will be working with transactions. Transactions are usually nested within a stored procedure. You will also be working with handling errors in your SQL.
 -- Task – Create a transaction that given a invoiceId will delete that invoice (There may be constraints that rely on this, find out how to resolve them).
+-- This works, but technically isn't a manual transaction.
+-- postgresql doesn't support transactions inside functions
+CREATE FUNCTION delInv(invId INTEGER)
+    RETURNS void AS $$
+        BEGIN
+            DELETE FROM invoiceline WHERE invoiceid = invId; 
+            DELETE FROM invoice WHERE invoiceid = invId;
+--          COMMIT;
+        END;
+        $$ LANGUAGE PLPGSQL;
 -- Task – Create a transaction nested within a stored procedure that inserts a new record in the Customer table
+-- This works, but technically isn't a manual transaction.
+-- postgresql doesn't support transactions inside functions
+CREATE FUNCTION insCust()
+    RETURNS void AS $$
+        BEGIN
+            INSERT INTO customer VALUES 70, 'bob', 'spargle', 'Google', '852 West Lane', 'Venice', 'RM', 'Italy', '545', '587-4564', '454-5656', 4);
+--          COMMIT;
+        END;
+        $$ LANGUAGE PLPGSQL;
+
 -- 6.0 Triggers
 -- In this section you will create various kinds of triggers that work when certain DML statements are executed on a table.
 -- 6.1 AFTER/FOR
+
+
 -- Task - Create an after insert trigger on the employee table fired after a new record is inserted into the table.
+
 -- Task – Create an after update trigger on the album table that fires after a row is inserted in the table
+
 -- Task – Create an after delete trigger on the customer table that fires after a row is deleted from the table.
+
 
 -- 6.2 INSTEAD OF
 -- Task – Create an instead of trigger that restricts the deletion of any invoice that is priced over 50 dollars.
+
+
 -- 7.0 JOINS
 -- In this section you will be working with combing various tables through the use of joins. You will work with outer, inner, right, left, cross, and self joins.
 -- 7.1 INNER
