@@ -198,7 +198,7 @@ CREATE FUNCTION delInv(invId INTEGER)
 CREATE FUNCTION insCust()
     RETURNS void AS $$
         BEGIN
-            INSERT INTO customer VALUES 70, 'bob', 'spargle', 'Google', '852 West Lane', 'Venice', 'RM', 'Italy', '545', '587-4564', '454-5656', 4);
+            INSERT INTO customer VALUES (70, 'bob', 'spargle', 'Google', '852 West Lane', 'Venice', 'RM', 'Italy', '545', '587-4564', '454-5656', 4);
 --          COMMIT;
         END;
         $$ LANGUAGE PLPGSQL;
@@ -209,15 +209,33 @@ CREATE FUNCTION insCust()
 
 
 -- Task - Create an after insert trigger on the employee table fired after a new record is inserted into the table.
-
+-- Trigger is useless, but works
+CREATE TRIGGER post_insert
+    AFTER INSERT ON employee
+    FOR EACH ROW
+    EXECUTE PROCEDURE suppress_redundant_updates_trigger();
 -- Task – Create an after update trigger on the album table that fires after a row is inserted in the table
-
+CREATE TRIGGER post_update
+    AFTER UPDATE ON album
+    FOR EACH ROW
+    EXECUTE PROCEDURE suppress_redundant_updates_trigger();
 -- Task – Create an after delete trigger on the customer table that fires after a row is deleted from the table.
-
+CREATE TRIGGER post_delete
+    AFTER DELETE ON customer
+    FOR EACH ROW
+    EXECUTE PROCEDURE suppress_redundant_updates_trigger();
 
 -- 6.2 INSTEAD OF
 -- Task – Create an instead of trigger that restricts the deletion of any invoice that is priced over 50 dollars.
-
+-- Cannot use INSTEAD OF on tables in postgresql, so make view first
+CREATE VIEW inv AS SELECT * FROM invoice;
+-- In additon, this statement won't actually work in postgresql
+-- because the language doesn't support when for INSTEAD OF triggers
+CREATE TRIGGER instead_of_delete
+    INSTEAD OF DELETE ON inv
+	FOR EACH ROW
+	WHEN (total > 50)
+    EXECUTE PROCEDURE suppress_redundant_updates_trigger();
 
 -- 7.0 JOINS
 -- In this section you will be working with combing various tables through the use of joins. You will work with outer, inner, right, left, cross, and self joins.
