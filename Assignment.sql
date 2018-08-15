@@ -142,15 +142,11 @@ CREATE FUNCTION selEmp()
 -- 4.2 Stored Procedure Input Parameters
 -- Task – Create a stored procedure that updates the personal information of an employee.
 CREATE FUNCTION selEmp()
-    RETURNS TABLE (
-        firstname VARCHAR,
-        lastname VARCHAR
-    )
-    AS $X$
+    RETURNS void AS $$
         BEGIN
-            RETURN QUERY SELECT E.firstname, E.lastname FROM employee E;
+            UPDATE employee SET firstname = 'Bob' WHERE employeeid = 1;
         END;
-        $X$ LANGUAGE PLPGSQL;
+        $$ LANGUAGE PLPGSQL;
 -- Task – Create a stored procedure that returns the managers of an employee.
 -- Returns first and last name of managers of the employee
 CREATE FUNCTION selMan(repTo INTEGER)
